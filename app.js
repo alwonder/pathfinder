@@ -90,8 +90,29 @@ function passThroughGraph(grid, startPoint) {
     }
 }
 
+function passWithSource(grid, startPoint) {
+    const frontier = []
+    frontier.push(startPoint);
+
+    const cameFrom = new Map();
+    cameFrom.set(startPoint, null);
+
+    while (frontier.length > 0) {
+        const current = frontier.pop();
+        grid.getNeighbours(current).forEach((neighbour) => {
+            if (!cameFrom.has(neighbour)) {
+                frontier.push(neighbour);
+                cameFrom.set(neighbour, current);
+            }
+        })
+    }
+    return cameFrom;
+}
+
 const grid = new MapGrid(3, 4, [
     { x: 1, y: 0 }
 ]);
 
 passThroughGraph(grid, { x: 2, y: 2});
+
+const cameFromMap = passWithSource(grid, { x: 2, y: 2});
