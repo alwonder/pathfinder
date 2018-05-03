@@ -1,4 +1,7 @@
 // @ts-check
+/**
+ * @class MapGrid
+ */
 class MapGrid {
     constructor(w, h, barriers) {
         this.createGrid(w, h);
@@ -14,18 +17,24 @@ class MapGrid {
                 this.addNode(i, j);
             }
         }
-        this._grid.forEach((tile) => { this.addNeighbors(tile); })
+        this._grid.forEach((tile) => { this.addNeighbours(tile); })
     }
 
-    addNeighbors(tile) {
+    addNeighbours(tile) {
         const nodeUp = this.getNode(tile.x, tile.y - 1);
-        if (nodeUp) tile.neighbors.add(nodeUp);
+        if (nodeUp) tile.neighbours.add(nodeUp);
         const nodeDown = this.getNode(tile.x, tile.y + 1);
-        if (nodeDown) tile.neighbors.add(nodeDown);
+        if (nodeDown) tile.neighbours.add(nodeDown);
         const nodeLeft = this.getNode(tile.x - 1, tile.y);
-        if (nodeLeft) tile.neighbors.add(nodeLeft);
+        if (nodeLeft) tile.neighbours.add(nodeLeft);
         const nodeRight = this.getNode(tile.x + 1, tile.y);
-        if (nodeRight) tile.neighbors.add(nodeRight);
+        if (nodeRight) tile.neighbours.add(nodeRight);
+    }
+
+    getNeighbours(tile) {
+        const node = this.getNode(tile.x, tile.y);
+        if (node === undefined) return [];
+        return Array.from(node.neighbours);
     }
 
     getNode(x, y) {
@@ -36,7 +45,7 @@ class MapGrid {
         const node = {
             x,
             y,
-            neighbors: new Set(),
+            neighbours: new Set(),
         }
         this._grid.add(node);
     }
@@ -51,13 +60,38 @@ class MapGrid {
     deleteNode(x, y) {
         const node = this.getNode(x, y);
         if (!node) return;
-        node.neighbors.forEach((neighborNode) => {
-            neighborNode.neighbors.delete(node);
+        node.neighbours.forEach((neighbourNode) => {
+            neighbourNode.neighbours.delete(node);
         });
         this._grid.delete(node);
+    }
+}
+
+/**
+ * 
+ * @param {MapGrid} grid Map grid
+ * @param {any} startPoint 
+ */
+function passThroughGraph(grid, startPoint) {
+    const frontier = []
+    frontier.push(startPoint);
+
+    const visited = new Set();
+    visited.add(startPoint);
+
+    while (frontier.length > 0) {
+        const current = frontier.pop();
+        grid.getNeighbours(current).forEach((neighbour) => {
+            if (!visited.has(neighbour)) {
+                frontier.push(neighbour);
+                visited.add(neighbour);
+            }
+        })
     }
 }
 
 const grid = new MapGrid(3, 4, [
     { x: 1, y: 0 }
 ]);
+
+passThroughGraph(grid, { x: 2, y: 2});
