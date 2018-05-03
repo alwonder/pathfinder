@@ -3,18 +3,18 @@
  * @class MapGrid
  */
 class MapGrid {
-    constructor(w, h, barriers) {
-        this.createGrid(w, h);
+    constructor(area, barriers) {
+        this.createGrid(area);
         this.createBarriers(barriers);
     }
 
-    createGrid(w, h) {
+    createGrid({ x, y, w, h }) {
         this._grid = new Set();
         this._w = w;
         this._h = h;
         for (let i = 0; i < w; i++) {
             for (let j = 0; j < h; j++) {
-                this.addNode(i, j);
+                this.addNode(i + x, j + y);
             }
         }
         this._grid.forEach((tile) => { this.addNeighbours(tile); })
@@ -117,6 +117,7 @@ function getPathToSource(directionsMap, destination) {
             destinationPoint = node;
         }
     })
+    if (destinationPoint === undefined) return null;
 
     const path = [];
     path.push(destinationPoint);
@@ -129,8 +130,9 @@ function getPathToSource(directionsMap, destination) {
     return path;
 }
 
-const grid = new MapGrid(7, 6, [
-    { x: 0, y: 3 },
+const grid = new MapGrid({
+    x: 1, y: 0, w: 7, h: 6,
+}, [
     { x: 1, y: 3 },
     { x: 2, y: 3 },
     { x: 2, y: 2 },
@@ -138,6 +140,7 @@ const grid = new MapGrid(7, 6, [
     { x: 3, y: 1 },
     { x: 4, y: 1 },
     { x: 5, y: 1 },
+    { x: 6, y: 1 },
 ]);
 
 passThroughGraph(grid, { x: 4, y: 2});
