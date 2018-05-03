@@ -38,7 +38,10 @@ class MapGrid {
     }
 
     getNode(x, y) {
-        return Array.from(this._grid).find(tile => tile.x === x && tile.y === y);
+        for (const tile of this._grid.values()) {
+            if (tile.x === x && tile.y === y) return tile;
+        }
+        return null;
     }
 
     addNode(x, y) {
