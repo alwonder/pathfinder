@@ -109,10 +109,38 @@ function passWithSource(grid, startPoint) {
     return cameFrom;
 }
 
-const grid = new MapGrid(3, 4, [
-    { x: 1, y: 0 }
+function getPathToSource(directionsMap, destination) {
+    let destinationPoint;
+
+    directionsMap.forEach((cameFrom, node) => {
+        if (node.x === destination.x && node.y === destination.y) {
+            destinationPoint = node;
+        }
+    })
+
+    const path = [];
+    path.push(destinationPoint);
+
+    let nbr = directionsMap.get(destinationPoint)
+    while (directionsMap.get(nbr) !== null) {
+        path.push(nbr);
+        nbr = directionsMap.get(nbr);
+    }
+    return path;
+}
+
+const grid = new MapGrid(7, 6, [
+    { x: 0, y: 3 },
+    { x: 1, y: 3 },
+    { x: 2, y: 3 },
+    { x: 2, y: 2 },
+    { x: 2, y: 1 },
+    { x: 3, y: 1 },
+    { x: 4, y: 1 },
+    { x: 5, y: 1 },
 ]);
 
-passThroughGraph(grid, { x: 2, y: 2});
+passThroughGraph(grid, { x: 4, y: 2});
 
-const cameFromMap = passWithSource(grid, { x: 2, y: 2});
+const cameFromMap = passWithSource(grid, { x: 4, y: 2});
+const path = getPathToSource(cameFromMap, {x: 1, y: 1});
