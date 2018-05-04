@@ -21,14 +21,15 @@ class MapGrid {
     }
 
     addNeighbours(tile) {
-        const nodeUp = this.getNode(tile.x, tile.y - 1);
-        if (nodeUp) tile.neighbours.add(nodeUp);
-        const nodeDown = this.getNode(tile.x, tile.y + 1);
-        if (nodeDown) tile.neighbours.add(nodeDown);
-        const nodeLeft = this.getNode(tile.x - 1, tile.y);
-        if (nodeLeft) tile.neighbours.add(nodeLeft);
-        const nodeRight = this.getNode(tile.x + 1, tile.y);
-        if (nodeRight) tile.neighbours.add(nodeRight);
+        for (const thatTile of this._grid.values()) {
+            if (
+                thatTile.x === tile.x && thatTile.y === tile.y - 1
+                || thatTile.x === tile.x && thatTile.y === tile.y + 1
+                || thatTile.x === tile.x - 1 && thatTile.y === tile.y
+                || thatTile.x === tile.x + 1 && thatTile.y === tile.y
+            ) tile.neighbours.add(thatTile);
+            if (tile.neighbours.size === 4) return;
+        }
     }
 
     getNeighbours(tile) {
@@ -95,6 +96,7 @@ function passThroughGraph(grid, startPoint) {
 
 function passWithSource(grid, startPoint) {
     const frontier = []
+    let count = 0;
     frontier.push(startPoint);
 
     const cameFrom = new Map();
@@ -104,6 +106,7 @@ function passWithSource(grid, startPoint) {
         const current = frontier.pop();
         grid.getNeighbours(current).forEach((neighbour) => {
             if (!cameFrom.has(neighbour)) {
+                count++;
                 frontier.push(neighbour);
                 cameFrom.set(neighbour, current);
             }
@@ -132,9 +135,10 @@ function getPathToSource(directionsMap, destination) {
     }
     return path;
 }
+const before = Date.now();
 
 const grid = new MapGrid({
-    x: 1, y: 0, w: 7, h: 6,
+    x: 0, y: 0, w: 100, h: 100,
 }, [
     { x: 1, y: 3 },
     { x: 2, y: 3 },
@@ -144,9 +148,19 @@ const grid = new MapGrid({
     { x: 4, y: 1 },
     { x: 5, y: 1 },
     { x: 6, y: 1 },
+    { x: 2, y: 4 },
+    { x: 3, y: 4 },
+    { x: 4, y: 4 },
+    { x: 5, y: 4 },
+    { x: 6, y: 4 },
 ]);
 
-passThroughGraph(grid, { x: 4, y: 2});
+console.log((Date.now() - before) / 1000);
 
-const cameFromMap = passWithSource(grid, { x: 4, y: 2});
-const path = getPathToSource(cameFromMap, {x: 1, y: 1});
+passThroughGraph(grid, { x: 0, y: 0});
+
+const cameFromMap = passWithSource(grid, { x: 0, y: 0});
+console.log((Date.now() - before) / 1000);
+
+const path = getPathToSource(cameFromMap, {x: 98, y: 96});
+console.log((Date.now() - before) / 1000);
