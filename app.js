@@ -10,7 +10,9 @@ class MapGrid {
         // this.drawGraph();
     }
 
-    createGrid({ x, y, w, h }) {
+    createGrid({
+        x, y, w, h,
+    }) {
         this._grid = new Set();
         this._w = w;
         this._h = h;
@@ -19,7 +21,7 @@ class MapGrid {
                 this.addNode(i + x, j + y);
             }
         }
-        this._grid.forEach((tile) => { this.addNeighbours(tile); })
+        this._grid.forEach((tile) => { this.addNeighbours(tile); });
     }
 
     addNeighbours(tile) {
@@ -52,7 +54,7 @@ class MapGrid {
             x,
             y,
             neighbours: new Set(),
-        }
+        };
         this._grid.add(node);
     }
 
@@ -60,7 +62,7 @@ class MapGrid {
         barriers.forEach((barrier) => {
             if (barrier.x === undefined || barrier.y === undefined) return;
             this.deleteNode(barrier.x, barrier.y);
-        })
+        });
     }
 
     deleteNode(x, y) {
@@ -93,12 +95,12 @@ class MapGrid {
 }
 
 /**
- * 
+ *
  * @param {MapGrid} grid Map grid
- * @param {any} startPoint 
+ * @param {any} startPoint
  */
 function passThroughGraph(grid, startPoint) {
-    const frontier = []
+    const frontier = [];
     frontier.push(startPoint);
 
     const visited = new Set();
@@ -116,7 +118,7 @@ function passThroughGraph(grid, startPoint) {
 }
 
 function passWithSource(grid, startPoint) {
-    const frontier = []
+    const frontier = [];
     let count = 0;
     frontier.push(startPoint);
 
@@ -131,7 +133,7 @@ function passWithSource(grid, startPoint) {
                 frontier.push(neighbour);
                 cameFrom.set(neighbour, current);
             }
-        })
+        });
     }
     return cameFrom;
 }
@@ -143,19 +145,20 @@ function getPathToSource(directionsMap, destination) {
         if (node.x === destination.x && node.y === destination.y) {
             destinationPoint = node;
         }
-    })
+    });
     if (destinationPoint === undefined) return null;
 
     const path = [];
     path.push(destinationPoint);
 
-    let nbr = directionsMap.get(destinationPoint)
+    let nbr = directionsMap.get(destinationPoint);
     while (directionsMap.get(nbr) !== null) {
         path.push(nbr);
         nbr = directionsMap.get(nbr);
     }
     return path;
 }
+
 const before = Date.now();
 
 const grid = new MapGrid({
