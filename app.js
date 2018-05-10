@@ -1,4 +1,5 @@
 // @ts-check
+const GridLine = require('./grid-log');
 /**
  * @class MapGrid
  */
@@ -6,6 +7,7 @@ class MapGrid {
     constructor(area, barriers) {
         this.createGrid(area);
         this.createBarriers(barriers);
+        // this.drawGraph();
     }
 
     createGrid({ x, y, w, h }) {
@@ -68,6 +70,25 @@ class MapGrid {
             neighbourNode.neighbours.delete(node);
         });
         this._grid.delete(node);
+    }
+
+    drawGraph() {
+        const firstLine = new GridLine();
+        firstLine.addEmptyCell();
+        for (let i = 0; i < this._w; i++) {
+            firstLine.addRowNumeration(i);
+        }
+        firstLine.out();
+
+        for (let i = 0; i < this._w; i++) {
+            const row = new GridLine();
+            row.addRowNumeration(i);
+            for (let j = 0; j < this._h; j++) {
+                const node = this.getNode(j, i);
+                row.addNodeSymbol(node);
+            }
+            row.out();
+        }
     }
 }
 
