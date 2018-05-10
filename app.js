@@ -125,7 +125,7 @@ function passWithSource(grid, startPoint) {
     const cameFrom = new Map();
     cameFrom.set(startPoint, null);
 
-    while (frontier.length > 0 && !foundNode) {
+    while (frontier.length > 0) {
         const current = frontier.shift();
         grid.getNeighbours(current).forEach((neighbour) => {
             if (!cameFrom.has(neighbour)) {
