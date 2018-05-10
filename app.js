@@ -113,7 +113,7 @@ function passThroughGraph(grid, startPoint) {
                 frontier.push(neighbour);
                 visited.add(neighbour);
             }
-        })
+        });
     }
 }
 
