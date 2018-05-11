@@ -1,5 +1,7 @@
 // @ts-check
 const GridLine = require('./grid-log');
+const pause = require('./pause');
+
 /**
  * @class MapGrid
  */
@@ -7,7 +9,6 @@ class MapGrid {
     constructor(area, barriers) {
         this.createGrid(area);
         this.createBarriers(barriers);
-        // this.drawGraph();
     }
 
     createGrid({
@@ -74,17 +75,22 @@ class MapGrid {
         this._grid.delete(node);
     }
 
-    drawGraph() {
-        const firstLine = new GridLine();
-        firstLine.addEmptyCell();
-        for (let i = 0; i < this._w; i++) {
-            firstLine.addRowNumeration(i);
-        }
-        firstLine.out();
+    async markTile(tile, type, duration) {
+        this.setTileType(type, tile);
+        this.draw();
+        await pause(duration);
+    }
 
+    setTileType(type, tile) {
+        const node = this.getNode(tile.x, tile.y);
+        if (node) node.type = type;
+    }
+
+    draw() {
+        process.stdout.write('\x1B[2J\x1B[0f');
         for (let i = 0; i < this._w; i++) {
             const row = new GridLine();
-            row.addRowNumeration(i);
+            // row.addRowNumeration(i);
             for (let j = 0; j < this._h; j++) {
                 const node = this.getNode(j, i);
                 row.addNodeSymbol(node);
@@ -160,7 +166,13 @@ function getPathToSource(directionsMap, destination) {
 }
 
 
-function findPathBFS(grid, startPoint, destination) {
+async function findPathBFS(grid, start, destination, out = false) {
+    const startPoint = grid.getNode(start.x, start.y);
+    if (start === undefined) return null;
+    if (out) {
+        grid.markTile(startPoint, 'source');
+        await grid.markTile(destination, 'destination', 300);
+    }
     const frontier = [];
     let count = 0;
     frontier.push(startPoint);
@@ -171,8 +183,8 @@ function findPathBFS(grid, startPoint, destination) {
 
     while (frontier.length > 0 && !foundNode) {
         const current = frontier.shift();
-        /* eslint no-loop-func: 0 */
-        grid.getNeighbours(current).forEach((neighbour) => {
+        /* eslint no-await-in-loop: 0 */
+        for (const neighbour of grid.getNeighbours(current)) {
             if (!directionsMap.has(neighbour)) {
                 count++;
                 frontier.push(neighbour);
@@ -180,17 +192,13 @@ function findPathBFS(grid, startPoint, destination) {
                 if (neighbour.x === destination.x && neighbour.y === destination.y) {
                     foundNode = true;
                 }
+                if (out) await grid.markTile(neighbour, 'search', 60);
             }
-        });
+        }
     }
     console.log(`Iterations: ${count}`);
 
-    let destinationPoint;
-    directionsMap.forEach((cameFrom, node) => {
-        if (node.x === destination.x && node.y === destination.y) {
-            destinationPoint = node;
-        }
-    });
+    const destinationPoint = grid.getNode(destination.x, destination.y);
     if (destinationPoint === undefined) return null;
 
     const path = [];
@@ -200,6 +208,7 @@ function findPathBFS(grid, startPoint, destination) {
     while (directionsMap.get(nbr) !== null) {
         path.push(nbr);
         nbr = directionsMap.get(nbr);
+        if (out) await grid.markTile(nbr, 'path', 60);
     }
     return path;
 }
@@ -230,6 +239,8 @@ console.log(`Time for grid create: ${(Date.now() - createTime) / 1000}`);
 
 // passThroughGraph(grid, { x: 0, y: 0});
 const pathfindTime = Date.now();
-const path = findPathBFS(grid, { x: 0, y: 0 }, { x: 4, y: 5 });
-console.log(`Time to find a path: ${(Date.now() - pathfindTime) / 1000}`);
+findPathBFS(grid, { x: 10, y: 6 }, { x: 14, y: 25 }, false)
+    .then((path) => {
+        console.log(`Elapsed time to find a path: ${(Date.now() - pathfindTime) / 1000}`);
+    });
 // debugger

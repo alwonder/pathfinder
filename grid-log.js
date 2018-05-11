@@ -1,12 +1,10 @@
 class GridLine {
     constructor() {
-        this.lines = ['', '', ''];
+        this.line = '';
     }
 
     addRowNumeration(index) {
-        this.lines[0] += '   ';
-        this.lines[1] += String(index).padEnd(3);
-        this.lines[2] += '   ';
+        this.line += String(index).padEnd(1);
     }
 
     addNodeSymbol(node) {
@@ -14,35 +12,26 @@ class GridLine {
             this.addEmptyCell();
             return;
         }
-        const neighbours = Array.from(node.neighbours);
-        if (neighbours.some(nbr => nbr.x === node.x && nbr.y === node.y - 1)) {
-            this.lines[0] += ' |¬';
-        } else this.lines[0] += '  ¬';
+        this.line += GridLine.getTileSymbol(node.type);
+    }
 
-        if (neighbours.some(nbr => nbr.x === node.x - 1 && nbr.y === node.y)) {
-            this.lines[1] += '-';
-        } else this.lines[1] += ' ';
-        this.lines[1] += '#';
-
-        if (neighbours.some(nbr => nbr.x === node.x + 1 && nbr.y === node.y)) {
-            this.lines[1] += '-';
-        } else this.lines[1] += ' ';
-
-        if (neighbours.some(nbr => nbr.x === node.x && nbr.y === node.y + 1)) {
-            this.lines[2] += ' | ';
-        } else this.lines[2] += '   ';
+    static getTileSymbol(type) {
+        switch (type) {
+        case 'bound': return '  ';
+        case 'source': return '▪▪';
+        case 'destination': return 'ds';
+        case 'path': return '▢▢';
+        case 'search': return '▨▨';
+        default: return '██';
+        }
     }
 
     addEmptyCell() {
-        this.lines[0] += '   ';
-        this.lines[1] += '   ';
-        this.lines[2] += '   ';
+        this.line += '  ';
     }
 
     out() {
-        console.log(this.lines[0]);
-        console.log(this.lines[1]);
-        console.log(this.lines[2]);
+        console.log(this.line);
     }
 }
 
