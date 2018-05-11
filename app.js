@@ -1,6 +1,7 @@
 // @ts-check
 const GridLine = require('./grid-log');
 const pause = require('./pause');
+const input = require('./input.json');
 
 /**
  * @class MapGrid
@@ -214,32 +215,12 @@ async function findPathBFS(grid, start, destination, out = false) {
 }
 
 const createTime = Date.now();
-const grid = new MapGrid({
-    x: 0, y: 0, w: 100, h: 100,
-}, [
-    { x: 1, y: 3 },
-    { x: 2, y: 3 },
-    { x: 2, y: 2 },
-    { x: 2, y: 1 },
-    { x: 3, y: 1 },
-    { x: 4, y: 1 },
-    { x: 5, y: 1 },
-    { x: 6, y: 1 },
-    { x: 2, y: 4 },
-    { x: 3, y: 4 },
-    { x: 4, y: 4 },
-    { x: 5, y: 4 },
-    { x: 6, y: 4 },
-]);
+const grid = new MapGrid(input, input.borders);
 
 console.log(`Time for grid create: ${(Date.now() - createTime) / 1000}`);
 
-// const cameFromMap = passWithSource(grid, { x: 0, y: 0 });
-// const path2 = getPathToSource(cameFromMap, { x: 54, y: 35 });
-
-// passThroughGraph(grid, { x: 0, y: 0});
 const pathfindTime = Date.now();
-findPathBFS(grid, { x: 10, y: 6 }, { x: 14, y: 25 }, false)
+findPathBFS(grid, { x: 10, y: 6 }, { x: 14, y: 25 }, true)
     .then((path) => {
         console.log(`Elapsed time to find a path: ${(Date.now() - pathfindTime) / 1000}`);
     });
