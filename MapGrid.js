@@ -22,14 +22,14 @@ class GridNode {
  * @class MapGrid
  */
 class MapGrid {
-    constructor(area, barriers) {
-        this.createGrid(area);
+    constructor(area, connectNodes, barriers) {
+        this.createGrid(area, connectNodes);
         this.createBarriers(barriers);
     }
 
     createGrid({
         x, y, w, h,
-    }) {
+    }, connectNodes) {
         this._grid = new Set();
         this._w = w;
         this._h = h;
@@ -38,7 +38,7 @@ class MapGrid {
                 this.addNode(j + x, i + y);
             }
         }
-        this._grid.forEach((tile) => { this.addNeighbours(tile); });
+        if (connectNodes) this._grid.forEach((tile) => { this.addNeighbours(tile); });
     }
 
     addNeighbours(tile) {
