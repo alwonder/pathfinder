@@ -1,5 +1,5 @@
 /* eslint no-await-in-loop: 0 */
-const GridOutput = require('./GridLine');
+const GridOutput = require('./GridOutput');
 
 /**
  * BFS pathfind through 2D-tile grid and return path from destination to source
