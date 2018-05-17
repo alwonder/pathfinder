@@ -5,6 +5,11 @@ class GridNode {
         this.neighbours = new Set();
     }
 
+    connect(node) {
+        this.neighbours.add(node);
+        node.neighbours.add(this);
+    }
+
     disconnect(node) {
         this.neighbours.delete(node);
         node.neighbours.delete(this);
@@ -30,7 +35,7 @@ class MapGrid {
     createGrid({
         x, y, w, h,
     }, connectNodes) {
-        this._grid = new Set();
+        this._grid = [];
         this._w = w;
         this._h = h;
         for (let i = 0; i < h; i++) {
@@ -42,26 +47,27 @@ class MapGrid {
     }
 
     addNeighbours(tile) {
-        for (const thatTile of this._grid.values()) {
-            if (
-                thatTile.x === tile.x && thatTile.y === tile.y - 1
-                || thatTile.x === tile.x && thatTile.y === tile.y + 1
-                || thatTile.x === tile.x - 1 && thatTile.y === tile.y
-                || thatTile.x === tile.x + 1 && thatTile.y === tile.y
-            ) tile.neighbours.add(thatTile);
-            if (tile.neighbours.size === 4) return;
-        }
+        const nodeUp = this.getNode(tile.x, tile.y - 1);
+        if (nodeUp) nodeUp.connect(tile);
+
+        const nodeDown = this.getNode(tile.x, tile.y + 1);
+        if (nodeDown) nodeDown.connect(tile);
+
+        const nodeLeft = this.getNode(tile.x - 1, tile.y);
+        if (nodeLeft) nodeLeft.connect(tile);
+
+        const nodeRight = this.getNode(tile.x + 1, tile.y);
+        if (nodeRight) nodeRight.connect(tile);
     }
 
     getNode(x, y) {
-        for (const tile of this._grid.values()) {
-            if (tile.x === x && tile.y === y) return tile;
-        }
-        return null;
+        if (x < 0 || x >= this._w) return null;
+        if (y < 0 || y >= this._h) return null;
+        return this._grid[x + (y * this._w)] || null;
     }
 
     addNode(x, y) {
-        this._grid.add(new GridNode(x, y));
+        this._grid.push(new GridNode(x, y));
     }
 
     createBarriers(barriers) {
