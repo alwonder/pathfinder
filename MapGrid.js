@@ -1,3 +1,23 @@
+class GridNode {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.neighbours = new Set();
+    }
+
+    disconnect(node) {
+        this.neighbours.delete(node);
+        node.neighbours.delete(this);
+    }
+
+    hasNeighbour(x, y) {
+        for (const nbr of this.neighbours.values()) {
+            if (x === nbr.x && y === nbr.y) return true;
+        }
+        return false;
+    }
+}
+
 /**
  * @class MapGrid
  */
@@ -47,12 +67,7 @@ class MapGrid {
     }
 
     addNode(x, y) {
-        const node = {
-            x,
-            y,
-            neighbours: new Set(),
-        };
-        this._grid.add(node);
+        this._grid.add(new GridNode(x, y));
     }
 
     createBarriers(barriers) {
@@ -66,7 +81,7 @@ class MapGrid {
         const node = this.getNode(x, y);
         if (!node) return;
         node.neighbours.forEach((neighbourNode) => {
-            neighbourNode.neighbours.delete(node);
+            node.disconnect(neighbourNode);
         });
         node.type = 'bound';
     }
