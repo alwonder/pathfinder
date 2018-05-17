@@ -12,7 +12,7 @@ const colorize = {
 };
 
 const tileTypes = {
-    bound() { return '  '; },
+    bound() { return colorize.black('██'); },
     source() { return colorize.red('██'); },
     destination() { return colorize.blue('██'); },
     path() { return colorize.green('██'); },
@@ -29,10 +29,29 @@ class GridOutput {
         console.clear();
         const iterator = this.grid._grid.values();
         for (let i = 0; i < this.grid._h; i++) {
+            let line = '';
             for (let j = 0; j < this.grid._w; j++) {
-                process.stdout.write(GridOutput.getTileSymbol(iterator.next().value));
+                line += GridOutput.getTileSymbol(iterator.next().value);
             }
-            process.stdout.write('\n');
+            console.log(line);
+        }
+
+        if (delay > 0) await pause(delay);
+    }
+
+    async drawWithConnectivity(delay = 0) {
+        console.clear();
+        const iterator = this.grid._grid.values();
+        for (let i = 0; i < this.grid._h; i++) {
+            let line1 = '';
+            let line2 = '';
+            for (let j = 1; j <= this.grid._w; j++) {
+                const nodeTile = GridOutput.getNodeTile(iterator.next().value);
+                line1 += nodeTile[0];
+                line2 += nodeTile[1];
+            }
+            console.log(line1);
+            console.log(line2);
         }
 
         if (delay > 0) await pause(delay);
@@ -40,6 +59,24 @@ class GridOutput {
 
     static getTileSymbol(tile) {
         return (tileTypes[tile.type] || tileTypes.default)();
+    }
+
+    static getNodeTile(node) {
+        const tileSymbol = GridOutput.getTileSymbol(node);
+        const neighbourRight = node.hasNeighbour(node.x + 1, node.y);
+        const neighbourDown = node.hasNeighbour(node.x, node.y + 1);
+
+        if (neighbourRight) {
+            return [
+                `${tileSymbol}${tileSymbol}`,
+                neighbourDown ? `${tileSymbol}${tileSymbol}` : '    ',
+            ];
+        }
+
+        return [
+            `${tileSymbol}  `,
+            neighbourDown ? `${tileSymbol}  ` : '    ',
+        ];
     }
 }
 
