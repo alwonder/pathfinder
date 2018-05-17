@@ -39,7 +39,7 @@ class GridOutput {
     }
 
     async drawWithConnectivity(delay = 0) {
-        console.clear();
+        let grid = '';
         for (let i = 0; i < this.grid._h; i++) {
             let line1 = '';
             let line2 = '';
@@ -48,9 +48,10 @@ class GridOutput {
                 line1 += nodeTile[0];
                 line2 += nodeTile[1];
             }
-            console.log(line1);
-            console.log(line2);
+            grid += `${line1}\n${line2}\n`;
         }
+        console.clear();
+        console.log(grid);
 
         if (delay > 0) await pause(delay);
     }
