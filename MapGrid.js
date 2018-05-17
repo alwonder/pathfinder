@@ -1,13 +1,14 @@
-const GridLine = require('./GridLine');
+const GridOutput = require('./GridLine');
 const pause = require('./pause');
+
 /**
  * @class MapGrid
  */
-
 class MapGrid {
     constructor(area, barriers) {
         this.createGrid(area);
         this.createBarriers(barriers);
+        this._output = new GridOutput(this);
     }
 
     createGrid({
@@ -16,9 +17,9 @@ class MapGrid {
         this._grid = new Set();
         this._w = w;
         this._h = h;
-        for (let i = 0; i < w; i++) {
-            for (let j = 0; j < h; j++) {
-                this.addNode(i + x, j + y);
+        for (let i = 0; i < h; i++) {
+            for (let j = 0; j < w; j++) {
+                this.addNode(j + x, i + y);
             }
         }
         this._grid.forEach((tile) => { this.addNeighbours(tile); });
@@ -71,7 +72,7 @@ class MapGrid {
         node.neighbours.forEach((neighbourNode) => {
             neighbourNode.neighbours.delete(node);
         });
-        this._grid.delete(node);
+        node.type = 'bound';
     }
 
     async markTile(tile, type, duration) {
@@ -86,16 +87,7 @@ class MapGrid {
     }
 
     draw() {
-        process.stdout.write('\x1B[2J\x1B[0f');
-        for (let i = 0; i < this._w; i++) {
-            const row = new GridLine();
-            // row.addRowNumeration(i);
-            for (let j = 0; j < this._h; j++) {
-                const node = this.getNode(j, i);
-                row.addNodeSymbol(node);
-            }
-            row.out();
-        }
+        this._output.draw();
     }
 }
 

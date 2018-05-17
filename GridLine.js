@@ -9,41 +9,34 @@ const colorize = {
     white(text) { return `\x1b[37m${text}\x1b[0m`; },
 };
 
-class GridLine {
-    constructor() {
-        this.line = '';
+const tileTypes = {
+    bound() { return '  '; },
+    source() { return colorize.red('██'); },
+    destination() { return colorize.blue('██'); },
+    path() { return colorize.green('██'); },
+    search() { return colorize.cyan('██'); },
+    default() { return '██'; },
+};
+
+class GridOutput {
+    constructor(grid) {
+        this.grid = grid;
     }
 
-    addRowNumeration(index) {
-        this.line += String(index).padEnd(1);
-    }
-
-    addNodeSymbol(node) {
-        if (!node) {
-            this.addEmptyCell();
-            return;
-        }
-        this.line += GridLine.getTileSymbol(node.type);
-    }
-
-    static getTileSymbol(type) {
-        switch (type) {
-        case 'bound': return '  ';
-        case 'source': return colorize.red('██');
-        case 'destination': return colorize.blue('██');
-        case 'path': return colorize.green('██');
-        case 'search': return colorize.cyan('██');
-        default: return '██';
+    draw() {
+        console.clear();
+        const iterator = this.grid._grid.values();
+        for (let i = 0; i < this.grid._h; i++) {
+            for (let j = 0; j < this.grid._w; j++) {
+                process.stdout.write(GridOutput.getTileSymbol(iterator.next().value));
+            }
+            process.stdout.write('\n');
         }
     }
 
-    addEmptyCell() {
-        this.line += '  ';
-    }
-
-    out() {
-        console.log(this.line);
+    static getTileSymbol(tile) {
+        return (tileTypes[tile.type] || tileTypes.default)();
     }
 }
 
-module.exports = GridLine;
+module.exports = GridOutput;
