@@ -15,11 +15,14 @@ async function findPathBFS(grid, start, destination, out = false) {
     let count = 0;
 
     const startPoint = grid.getNode(start.x, start.y);
-    if (start === undefined) return null;
+    if (startPoint === undefined) return null;
+
+    const destinationPoint = grid.getNode(destination.x, destination.y);
+    if (destinationPoint === undefined) return null;
 
     if (out) {
         grid.setTileType('source', startPoint);
-        grid.setTileType('destination', destination);
+        grid.setTileType('destination', destinationPoint);
         await output.draw(300);
     }
 
@@ -45,8 +48,9 @@ async function findPathBFS(grid, start, destination, out = false) {
                 count++;
                 frontier.push(neighbour);
                 directionsMap.set(neighbour, current);
-                if (neighbour.x === destination.x && neighbour.y === destination.y) {
+                if (neighbour === destinationPoint) {
                     foundNode = true;
+                    break;
                 }
                 if (out) {
                     grid.setTileType('search', neighbour);
@@ -57,9 +61,6 @@ async function findPathBFS(grid, start, destination, out = false) {
     }
     console.log(`Iterations: ${count}`);
 
-    const destinationPoint = grid.getNode(destination.x, destination.y);
-    if (destinationPoint === undefined) return null;
-
     const path = [];
     path.push(destinationPoint);
 
@@ -68,13 +69,13 @@ async function findPathBFS(grid, start, destination, out = false) {
     // Iterating through passed nodes in reversed direction until we find
     // the source node (which has null value)
     while (directionsMap.get(nbr) !== null) {
-        path.push(nbr);
-        nbr = directionsMap.get(nbr);
-
         if (out) {
             grid.setTileType('path', nbr);
             await output.draw(60);
         }
+
+        path.push(nbr);
+        nbr = directionsMap.get(nbr);
     }
     return path;
 }
