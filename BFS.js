@@ -15,10 +15,10 @@ async function findPathBFS(grid, start, destination, out = false) {
     let count = 0;
 
     const startPoint = grid.getNode(start.x, start.y);
-    if (startPoint === undefined) return null;
+    if (startPoint === null || startPoint === undefined) return null;
 
     const destinationPoint = grid.getNode(destination.x, destination.y);
-    if (destinationPoint === undefined) return null;
+    if (destinationPoint === null || destinationPoint === undefined) return null;
 
     if (out) {
         grid.setTileType('source', startPoint);
@@ -65,6 +65,10 @@ async function findPathBFS(grid, start, destination, out = false) {
     path.push(destinationPoint);
 
     let nbr = directionsMap.get(destinationPoint);
+
+    // Destination point wasn't found.
+    // It means we can't get to the tile from the current source
+    if (nbr === undefined) return null;
 
     // Iterating through passed nodes in reversed direction until we find
     // the source node (which has null value)
