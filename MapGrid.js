@@ -66,6 +66,23 @@ class MapGrid {
         return this._grid[x + (y * this._w)] || null;
     }
 
+    getAdjacentTiles(node) {
+        const adjacents = [];
+        const nodeUp = this.getNode(node.x, node.y - 1);
+        if (nodeUp) adjacents.push(nodeUp);
+
+        const nodeDown = this.getNode(node.x, node.y + 1);
+        if (nodeDown) adjacents.push(nodeDown);
+
+        const nodeLeft = this.getNode(node.x - 1, node.y);
+        if (nodeLeft) adjacents.push(nodeLeft);
+
+        const nodeRight = this.getNode(node.x + 1, node.y);
+        if (nodeRight) adjacents.push(nodeRight);
+
+        return adjacents;
+    }
+
     addNode(x, y) {
         this._grid.push(new GridNode(x, y));
     }
