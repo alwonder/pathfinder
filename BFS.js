@@ -23,7 +23,7 @@ async function findPathBFS(grid, start, destination, out = false) {
     if (out) {
         grid.setTileType('source', startPoint);
         grid.setTileType('destination', destinationPoint);
-        await output.draw(300);
+        await output.drawWithConnectivity(300);
     }
 
     // Make an array with frontier nodes
@@ -54,7 +54,7 @@ async function findPathBFS(grid, start, destination, out = false) {
                 }
                 if (out) {
                     grid.setTileType('search', neighbour);
-                    await output.draw(60);
+                    await output.drawWithConnectivity(60);
                 }
             }
         }
@@ -75,7 +75,7 @@ async function findPathBFS(grid, start, destination, out = false) {
     while (directionsMap.get(nbr) !== null) {
         if (out) {
             grid.setTileType('path', nbr);
-            await output.draw(60);
+            await output.drawWithConnectivity(60);
         }
 
         path.push(nbr);
