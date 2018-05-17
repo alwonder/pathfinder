@@ -1,5 +1,6 @@
 // @ts-check
 /* eslint no-await-in-loop: 0 */
+
 const input = require('./input.json');
 const MapGrid = require('./MapGrid');
 const findPathBFS = require('./BFS');

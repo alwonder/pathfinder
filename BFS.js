@@ -1,4 +1,5 @@
 /* eslint no-await-in-loop: 0 */
+const GridOutput = require('./GridLine');
 
 /**
  * BFS pathfind through 2D-tile grid and return path from destination to source
@@ -9,6 +10,7 @@
  * @returns {Promise<Array<{x: number, y: number }>>} Path from destination to source
  */
 async function findPathBFS(grid, start, destination, out = false) {
+    const output = new GridOutput(grid);
     // Count overall iterations while passing through graph
     let count = 0;
 
@@ -16,8 +18,9 @@ async function findPathBFS(grid, start, destination, out = false) {
     if (start === undefined) return null;
 
     if (out) {
-        grid.markTile(startPoint, 'source');
-        await grid.markTile(destination, 'destination', 300);
+        grid.setTileType('source', startPoint);
+        grid.setTileType('destination', destination);
+        await output.draw(300);
     }
 
     // Make an array with frontier nodes
@@ -45,7 +48,10 @@ async function findPathBFS(grid, start, destination, out = false) {
                 if (neighbour.x === destination.x && neighbour.y === destination.y) {
                     foundNode = true;
                 }
-                if (out) await grid.markTile(neighbour, 'search', 60);
+                if (out) {
+                    grid.setTileType('search', neighbour);
+                    await output.draw(60);
+                }
             }
         }
     }
@@ -64,7 +70,11 @@ async function findPathBFS(grid, start, destination, out = false) {
     while (directionsMap.get(nbr) !== null) {
         path.push(nbr);
         nbr = directionsMap.get(nbr);
-        if (out) await grid.markTile(nbr, 'path', 60);
+
+        if (out) {
+            grid.setTileType('path', nbr);
+            await output.draw(60);
+        }
     }
     return path;
 }

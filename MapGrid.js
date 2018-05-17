@@ -1,6 +1,3 @@
-const GridOutput = require('./GridLine');
-const pause = require('./pause');
-
 /**
  * @class MapGrid
  */
@@ -8,7 +5,6 @@ class MapGrid {
     constructor(area, barriers) {
         this.createGrid(area);
         this.createBarriers(barriers);
-        this._output = new GridOutput(this);
     }
 
     createGrid({
@@ -75,19 +71,9 @@ class MapGrid {
         node.type = 'bound';
     }
 
-    async markTile(tile, type, duration) {
-        this.setTileType(type, tile);
-        this.draw();
-        await pause(duration);
-    }
-
     setTileType(type, tile) {
         const node = this.getNode(tile.x, tile.y);
         if (node) node.type = type;
-    }
-
-    draw() {
-        this._output.draw();
     }
 }
 

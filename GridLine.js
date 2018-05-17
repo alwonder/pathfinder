@@ -1,3 +1,5 @@
+const pause = require('./pause');
+
 const colorize = {
     black(text) { return `\x1b[30m${text}\x1b[0m`; },
     red(text) { return `\x1b[31m${text}\x1b[0m`; },
@@ -23,7 +25,7 @@ class GridOutput {
         this.grid = grid;
     }
 
-    draw() {
+    async draw(delay = 0) {
         console.clear();
         const iterator = this.grid._grid.values();
         for (let i = 0; i < this.grid._h; i++) {
@@ -32,6 +34,8 @@ class GridOutput {
             }
             process.stdout.write('\n');
         }
+
+        if (delay > 0) await pause(delay);
     }
 
     static getTileSymbol(tile) {
