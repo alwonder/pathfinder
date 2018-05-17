@@ -53,12 +53,6 @@ class MapGrid {
         }
     }
 
-    getNeighbours(tile) {
-        const node = this.getNode(tile.x, tile.y);
-        if (node === undefined) return [];
-        return Array.from(node.neighbours);
-    }
-
     getNode(x, y) {
         for (const tile of this._grid.values()) {
             if (tile.x === x && tile.y === y) return tile;

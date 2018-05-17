@@ -43,7 +43,7 @@ async function findPathBFS(grid, start, destination, out = false) {
     // Iterating while we have unattended nodes and not found destination node
     while (frontier.length > 0 && !foundNode) {
         const current = frontier.shift();
-        for (const neighbour of grid.getNeighbours(current)) {
+        for (const neighbour of current.neighbours) {
             if (!directionsMap.has(neighbour)) {
                 count++;
                 frontier.push(neighbour);
