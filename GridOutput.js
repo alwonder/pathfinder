@@ -27,9 +27,9 @@ class GridOutput {
 
     async draw(delay = 0) {
         console.clear();
-        for (let i = 0; i < this.grid._h; i++) {
+        for (let i = this.grid.startY; i < this.endY; i++) {
             let line = '';
-            for (let j = 0; j < this.grid._w; j++) {
+            for (let j = this.grid.startX; j < this.endX; j++) {
                 line += GridOutput.getTileSymbol(this.grid.getNode(j, i));
             }
             console.log(line);
@@ -40,10 +40,10 @@ class GridOutput {
 
     async drawWithConnectivity(delay = 0) {
         let grid = '';
-        for (let i = 0; i < this.grid._h; i++) {
+        for (let i = this.grid.startY; i < this.grid.endY; i++) {
             let line1 = '';
             let line2 = '';
-            for (let j = 0; j < this.grid._w; j++) {
+            for (let j = this.grid.startX; j < this.grid.endX; j++) {
                 const nodeTile = GridOutput.getNodeTile(this.grid.getNode(j, i));
                 line1 += nodeTile[0];
                 line2 += nodeTile[1];

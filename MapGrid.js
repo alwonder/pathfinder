@@ -32,10 +32,28 @@ class MapGrid {
         this.createBarriers(barriers);
     }
 
+    get startX() {
+        return this._initX;
+    }
+
+    get startY() {
+        return this._initY;
+    }
+
+    get endX() {
+        return this._w + this._initX;
+    }
+
+    get endY() {
+        return this._h + this._initY;
+    }
+
     createGrid({
         x, y, w, h,
     }, connectNodes) {
         this._grid = [];
+        this._initX = x || 0;
+        this._initY = y || 0;
         this._w = w;
         this._h = h;
         for (let i = 0; i < h; i++) {
@@ -61,9 +79,10 @@ class MapGrid {
     }
 
     getNode(x, y) {
-        if (x < 0 || x >= this._w) return null;
-        if (y < 0 || y >= this._h) return null;
-        return this._grid[x + (y * this._w)] || null;
+        if (x < this.startX || x >= this.endX) return null;
+        if (y < this.startY || y >= this.endY) return null;
+        const index = (x - this.startX) + ((y - this.startY) * this._w);
+        return this._grid[index] || null;
     }
 
     getAdjacentTiles(node) {
